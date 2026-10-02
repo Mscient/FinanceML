@@ -20,6 +20,7 @@ class LogisticRegressionModel:
     def predict(self, x_test):
         return self.model.predict(x_test)
 
+
     def predict_proba(self, x_test):
         return self.model.predict_proba(x_test)
 
@@ -51,7 +52,6 @@ def is_fraud():
     confusion=confusion_matrix(y_test, y_pred)
     return accuracy, precision ,recall,f1,confusion
 
-
 def default():
     model = LogisticRegressionModel()
     X_train, X_test, y_train, y_test = model.load_data()
@@ -69,7 +69,6 @@ def default():
     confusion=confusion_matrix(y_test, y_pred)
     return accuracy, precision,recall,f1,confusion 
 
-
 def main():
     is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion= is_fraud()
     print("is_fraud_accuracy:", is_fraud_accuracy)
@@ -84,6 +83,7 @@ def main():
     print("default_recall:",default_recall)
     print("default_f1:",default_f1)
     print("default_confusion:",default_confusion)
+
 
 
 if __name__ == "__main__":
