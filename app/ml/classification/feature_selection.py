@@ -455,7 +455,8 @@ class Select_feature:
         print("\nSET_E")
         print(set_e)
 
-        return ev_table, set_d,set_e
+
+        return rfe,rfecv,l1_selected,ev_table, set_d,set_e
 
         
 if __name__ == "__main__":
