@@ -2,9 +2,6 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-
-
- 
 sys.path.append(str(Path(__file__).resolve().parents[3]))
 
 from sklearn.ensemble import RandomForestClassifier
@@ -35,6 +32,9 @@ class Random:
         y_train = pd.read_csv(Y_TRAIN_PATH)
         y_test = pd.read_csv(Y_TEST_PATH)
         return X_train, X_test, y_train, y_test
+    
+    def feature(self,X_train):
+        return pd.Series(self.model.feature_importances_, index=X_train.columns).sort_values(ascending=False)
 
 
 def is_fraud():
@@ -49,7 +49,8 @@ def is_fraud():
     recall=recall_score(y_test,y_pred,zero_division=0)
     f1=f1_score(y_test,y_pred,zero_division=0)
     confusion=confusion_matrix(y_test,y_pred)
-    return accuracy, precision,recall,f1,confusion
+    dist1=model.feature(X_train)
+    return accuracy, precision,recall,f1,confusion,dist1
     
 def default(): 
     model = Random()
@@ -63,22 +64,27 @@ def default():
     recall=recall_score(y_test,y_pred,zero_division=0)
     f1=f1_score(y_test,y_pred,zero_division=0)
     confusion=confusion_matrix(y_test,y_pred)
-    return accuracy, precision,recall,f1,confusion
+    dist2=model.feature(X_train)
+    return accuracy, precision,recall,f1,confusion,dist2
+
 
 def main():
-    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion= is_fraud()
+    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion,dist1= is_fraud()
     print("is_fraud_accuracy:", is_fraud_accuracy)
     print("is_fraud_precision:", is_fraud_precision)
     print("is_Recall:",is_fraud_recall)
     print("is_f1:",is_fraud_f1)
     print("is_confusion:",is_fraud_confusion)
+    print(dist1)
      
-    default_accuracy, default_precision,default_recall,default_f1,default_confusion= default()
+
+    default_accuracy, default_precision,default_recall,default_f1,default_confusion,dist2= default()
     print("default_accuracy:", default_accuracy)
     print("default_precision:", default_precision)
     print("default_recall:",default_recall)
     print("default_f1:",default_f1)
     print("default_confusion:",default_confusion)
+    print(dist2)
 
 if __name__ == "__main__":
     main()
