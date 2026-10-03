@@ -375,9 +375,27 @@ class Select_feature:
             | evidence_table["rf_support"]
         )
 
-        set_d = evidence_table[model_based].index.tolist()
-        
-        return set_d
+        core_mask = (
+        (evidence_table["evidence_count"] >= 4)
+        & model_based
+        )
+
+        set_d = evidence_table[core_mask].index.tolist()
+
+        core_features = evidence_table.index[core_mask].tolist()
+
+        # Strong candidates
+        strong_mask = (
+            (evidence_table["evidence_count"] >= 3)
+            & model_based
+            & ~core_mask
+        )
+
+        strong_features = evidence_table.index[strong_mask].tolist()
+
+        set_e = strong_features+ core_features
+    
+        return set_d, set_e
 
     def run(self, target):
 
@@ -411,9 +429,11 @@ class Select_feature:
         )
 
         
-        set_d = self.create_set(
+        set_d,set_e = self.create_set(
             ev_table
         )
+
+        
 
        
 
@@ -432,18 +452,21 @@ class Select_feature:
         print("\nSET D:")
         print(set_d)
 
-        return ev_table, set_d
+        print("\nSET_E")
+        print(set_e)
+
+        return ev_table, set_d,set_e
 
         
 if __name__ == "__main__":
 
     selector = Select_feature()
 
-    fraud_table, fraud_set_d = selector.run(
+    fraud_table, fraud_set_d, fraud_set_e = selector.run(
         "is_fraud"
     )
 
-    default_table, default_set_d = selector.run(
+    default_table, default_set_d, default_set_e = selector.run(
         "default"
     )
     
