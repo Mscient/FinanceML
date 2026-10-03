@@ -404,21 +404,13 @@ class Select_feature:
         print("======================================")
 
         X, y = self.load_target(target)
-
-       
         correlation = self.correlation_feature(X, y)
-
         mi = self.mutual_information(X, y)
- 
         rfe = self.rfe_features(X, y)
-
         rfecv = self.rfecv_features(X, y)
-
-      
         l1, l1_selected = self.l1_features(X, y)
-
         rf = self.random_forest_features(X, y)
- 
+
         ev_table = self.evidence_table(
             correlation,
             mi,
@@ -427,16 +419,9 @@ class Select_feature:
             l1,
             rf
         )
-
-        
         set_d,set_e = self.create_set(
             ev_table
         )
-
-        
-
-       
-
         print("\nRFE:")
         print(rfe)
 
@@ -456,20 +441,23 @@ class Select_feature:
         print(set_e)
 
 
-        return rfe,rfecv,l1_selected,ev_table, set_d,set_e
+        return rfe,rfecv,set_d,set_e
 
-        
-if __name__ == "__main__":
 
+def main():
     selector = Select_feature()
 
-    fraud_table, fraud_set_d, fraud_set_e = selector.run(
+    fraud_rfe, fraud_rfecv, fraud_set_d, fraud_set_e = selector.run(
         "is_fraud"
     )
 
-    default_table, default_set_d, default_set_e = selector.run(
+    default_rfe, default_rfecv, default_set_d, default_set_e = selector.run(
         "default"
     )
+
+
+if __name__=="__main__":
+    main()  
     
 
 

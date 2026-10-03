@@ -12,7 +12,7 @@ from app.core.config import X_TRAIN_PATH, X_TEST_PATH, Y_TRAIN_PATH, Y_TEST_PATH
 class Random:
 
     def __init__(self):
-        self.model=RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42)
+        self.model=RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42, class_weight='balanced_subsample', min_samples_leaf=1)
     
     def train(self, x_train, y_train):
         self.model.fit(x_train, y_train)

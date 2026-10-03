@@ -12,7 +12,7 @@ from app.core.config import X_TRAIN_PATH, X_TEST_PATH, Y_TRAIN_PATH, Y_TEST_PATH
 
 class LogisticRegressionModel:
     def __init__(self):
-        self.model = LogisticRegression(max_iter=1000)
+        self.model = LogisticRegression(max_iter=1000, class_weight='balanced')
 
     def train(self, x_train, y_train):
         self.model.fit(x_train, y_train)
