@@ -14,8 +14,7 @@ class Random:
     def __init__(self):
         self.model=RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42, class_weight='balanced_subsample', min_samples_leaf=1)
     
-    def train(self, x_train, y_train):
-        self.model.fit(x_train, y_train)
+  
 
     def predict(self, x_test):
         return self.model.predict(x_test)
@@ -36,7 +35,22 @@ class Random:
     def feature(self,X_train):
         return pd.Series(self.model.feature_importances_, index=X_train.columns).sort_values(ascending=False)
 
+    def train(self,target,model):
+        model=model
+        X_train, X_test, y_train, y_test = model.load_data()
+        y_train = y_train[target]
+        y_test = y_test[target]
+        self.model.fit(X_train, y_train)
+        y_pred=self.model.predict(X_test)
+        accuracy=accuracy_score(y_test,y_pred)
+        precision=precision_score(y_test,y_pred,zero_division=0)
+        recall=recall_score(y_test,y_pred,zero_division=0)
+        f1=f1_score(y_test,y_pred,zero_division=0)
+        confusion=confusion_matrix(y_test,y_pred)
+        dist1=self.feature(X_train)
+        return accuracy, precision,recall,f1,confusion,dist1
 
+"""
 def is_fraud():
     model = Random()
     X_train, X_test, y_train, y_test = model.load_data()
@@ -48,9 +62,9 @@ def is_fraud():
     precision=precision_score(y_test,y_pred,zero_division=0)
     recall=recall_score(y_test,y_pred,zero_division=0)
     f1=f1_score(y_test,y_pred,zero_division=0)
-    confusion=confusion_matrix(y_test,y_pred)
+    #confusion=confusion_matrix(y_test,y_pred)
     dist1=model.feature(X_train)
-    return accuracy, precision,recall,f1,confusion,dist1
+    return accuracy, precision,recall,f1,dist1
     
 def default(): 
     model = Random()
@@ -67,18 +81,20 @@ def default():
     dist2=model.feature(X_train)
     return accuracy, precision,recall,f1,confusion,dist2
 
+"""
 
 def main():
-    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion,dist1= is_fraud()
+    model=Random()
+    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_confusion,dist1=model.train("is_fraud",model)
     print("is_fraud_accuracy:", is_fraud_accuracy)
     print("is_fraud_precision:", is_fraud_precision)
     print("is_Recall:",is_fraud_recall)
     print("is_f1:",is_fraud_f1)
-    print("is_confusion:",is_fraud_confusion)
+    print("is_confusion:",is_confusion)
     print(dist1)
      
 
-    default_accuracy, default_precision,default_recall,default_f1,default_confusion,dist2= default()
+    default_accuracy, default_precision,default_recall,default_f1,default_confusion,dist2=model.train("default",model)
     print("default_accuracy:", default_accuracy)
     print("default_precision:", default_precision)
     print("default_recall:",default_recall)
