@@ -1,0 +1,17 @@
+[
+    "credit_score",
+    "debt_to_income",
+    "annual_income",
+    "monthly_income",
+    "salary_to_loan",
+    "savings_balance",
+    "credit_util",
+    "years_employed",
+    "loan_purpose_home",
+    "avg_transaction_amount",
+    "age",
+    "existing_debt",
+    "savings_to_income",
+    "debt_to_saving_ratio",
+    "monthly_emi"
+]
