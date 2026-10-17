@@ -415,7 +415,7 @@ Contributions are welcome.
 
 ## License
 
-No license has been specified yet. Add a `LICENSE` file and update this section before distributing the project under a particular license.
+ 
 
 ---
 
