@@ -1,195 +1,12 @@
-# from openpyxl.worksheet import header_footer
-# from scipy.spatial.distance import correlation
-# import pandas as pd
-# from train_random import Random 
-# from train_logistic import LogisticRegressionModel
-# from sklearn.linear_model import LogisticRegression
-# from app.core.config import X_TRAIN_PATH, X_TEST_PATH, Y_TRAIN_PATH, Y_TEST_PATH
-# from scipy.stats import pearsonr, spearmanr
-# from sklearn.feature_selection import mutual_info_classif
-# from sklearn.feature_selection import RFE,RFECV
-# from sklearn.model_selection import StratifiedKFold
-# from sklearn.feature_selection import SelectFromModel
-# from sklearn.preprocessing import StandardScaler
-# from sklearn.pipeline import Pipeline
-
-
-
-# class Select_feature:
-
-#     def __init__(self):
-#         self.X_train=pd.read_csv("BASE_PATH/")
-
-
-# def is_fraud():
-#     model=Random()
-#     X_train,X_test,y_train,y_test=model.load_data()
-#     y_train=y_train['is_fraud']
-#     y_test=y_test['is_fraud']
-#     model.train(X_train,y_train)
-#     dist1=model.feature(X_train)
-
-#     #correlation
-#     correlation1 = {}
-#     for col in X_train.columns:
-#         pearson_corr, _ = pearsonr(X_train[col], y_train)
-#         spearman_corr, _ = spearmanr(X_train[col], y_train)
-#         correlation1[col] = {
-#             "pearson": pearson_corr,
-#             "spearman": spearman_corr
-#         }
-    
-#     #Mutual Information
-#     mi_scores = mutual_info_classif(X_train, y_train, discrete_features='auto', random_state=42)
-#     mi_df = pd.Series(mi_scores, index=X_train.columns).sort_values(ascending=False)
-    
-#     #rfe
-#     rfe = RFE(model.get_model(), n_features_to_select=5, step=1)
-#     rfe.fit(X_train, y_train)
-#     selected = X_train.columns[rfe.support_].tolist()
-    
-#     #rfcv
-#     cv = StratifiedKFold(5, shuffle=True, random_state=42)
-
-#     rfecv = RFECV(
-#     estimator=model.get_model(),
-#     step=1,                        
-#     cv=cv,
-#     scoring='f1',                 
-#     min_features_to_select=1
-#         )      
-
-
-#     rfecv.fit(X_train, y_train)
-
-#     best_features = X_train.columns[rfecv.support_].tolist()
-#     optimal_k = rfecv.n_features_
-
-#      # L1 logistic regresion
-#     pipe = Pipeline([
-#     ('scaler', StandardScaler()),
-#     ('selector', SelectFromModel(
-#         LogisticRegression(penalty='l1', C=0.1, solver='liblinear', max_iter=1000)
-#     ))
-#         ])
-
-#     selected_mask = pipe.named_steps['selector'].get_support()
-#     selected_names = X_train.columns[selected_mask]
-
-#     return correlation1,mi_df,selected,best_features,selected_names
-
-
-# def default():
-#     model=Random()
-#     X_train,X_test,y_train,y_test=model.load_data()
-#     y_train=y_train['default']
-#     y_test=y_test['default']
-#     model.train(X_train,y_train)
-#     dist2=model.feature(X_train)
-
-#     #correlation
-#     correlation2 = {}
-#     for col in X_train.columns:
-#         pearson_corr, _ = pearsonr(X_train[col], y_train)
-#         spearman_corr, _ = spearmanr(X_train[col], y_train)
-#         correlation2[col] = {
-#             "pearson": pearson_corr,
-#             "spearman": spearman_corr
-#         }
-
-#     #Mutual Information
-#     mi_scores = mutual_info_classif(X_train, y_train, discrete_features='auto', random_state=42)
-#     mi_df = pd.Series(mi_scores, index=X_train.columns).sort_values(ascending=False)
-
-
-#     #rfe
-#     rfe = RFE(model.get_model(), n_features_to_select=5, step=1)
-#     rfe.fit(X_train, y_train)
-#     selected = X_train.columns[rfe.support_].tolist()
-
-    
-#     #rfcv
-#     cv = StratifiedKFold(5, shuffle=True, random_state=42)
-
-#     rfecv = RFECV(
-#     estimator=model.get_model(),
-#     step=1,                        
-#     cv=cv,
-#     scoring='f1',                 
-#     min_features_to_select=1
-#         )      
-#     rfecv.fit(X_train, y_train)
-#     best_features = X_train.columns[rfecv.support_].tolist()
-#     optimal_k = rfecv.n_features_
-
-#     # L1 logistic regresion
-#     pipe = Pipeline([
-#     ('scaler', StandardScaler()),
-#     ('selector', SelectFromModel(
-#         LogisticRegression(penalty='l1', C=0.1, solver='liblinear', max_iter=1000)
-#     ))
-#         ])
-#     selected_mask = pipe.named_steps['selector'].get_support()
-#     selected_names = X_train.columns[selected_mask]
-
-#     return correlation2,mi_df,selected,best_features,selected_names
-
-
-# def main():
-#     print(" hELLO")
-#     correlation1,mi_df1,rfe1,best_features1,selected_names1=is_fraud()
-#     correlation2,mi_df2,rfe2,best_features2,selected_names2=default()
-#     #print("correlation1:",correlation1)
-#     #print("correlation2:",correlation2)
-#     print("is_fraud")
-#     #print("mi_scores1:",mi_df1)
-#     print('\n')
-#     #print("rfe1:",rfe1)
-#     print('\n')
-#     print("default")
-#     #print("mi_scores2:",mi_df2)
-#     print('\n')
-#     #print("rfe2:",rfe2)
-#     print('\n')
-#     #print("best_features1:",best_features1)
-#     print('\n')
-#     #print("best_features2:",best_features2)
-#     print('\n')
-#     print("Selected Features:",selected_names1)
-#     print("Selected Features:",selected_names2)
-
-#     _fraud={
-#         "correlation":correlation1,
-#         "mi":mi_df1,
-#         "rfe":rfe1,
-#         "rfecv":best_features1,
-#         "selected_names":selected_names1
-#     }
-
-#     _default={
-#         "correlation":correlation2,
-#         "mi":mi_df2,
-#         "rfe":rfe2,
-#         "rfecv":best_features2,
-#         "selected_names":selected_names2
-#     }
-
-    
-#     return _fraud,_default
-   
-
-
-
-# if __name__=="__main__":
-#     main()
-
-
 
 import pandas as pd
 import numpy as np
-
+import json
 from pathlib import Path
+DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
 
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import mutual_info_classif, RFE, RFECV
@@ -197,20 +14,29 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold
 
 
-BASE_PATH=Path(__file__).parent.parent.parent/"data"
-
+ 
 
 class Select_feature:
 
     def __init__(self):
-        self.X_train=pd.read_csv(BASE_PATH/"X_train.csv")
-        self.y_train=pd.read_csv(BASE_PATH/"y_train.csv")
+        self.X_train_default=pd.read_csv(PROCESSED_DATA_DIR/"X_train_default.csv")
+        self.X_test_default=pd.read_csv(PROCESSED_DATA_DIR/"X_test_default.csv")
+        self.y_train_default=pd.read_csv(PROCESSED_DATA_DIR/"y_train_default.csv")
+        self.y_test_default=pd.read_csv(PROCESSED_DATA_DIR/"y_test_default.csv")
+        self.X_train_fraud=pd.read_csv(PROCESSED_DATA_DIR/"X_train_is_fraud.csv")
+        self.X_test_fraud=pd.read_csv(PROCESSED_DATA_DIR/"X_test_is_fraud.csv")
+        self.y_train_fraud=pd.read_csv(PROCESSED_DATA_DIR/"y_train_is_fraud.csv")
+        self.y_test_fraud=pd.read_csv(PROCESSED_DATA_DIR/"y_test_is_fraud.csv")
+
 
     def load_target(self,target):
-        X=self.X_train.copy()
-        y=self.y_train[target]
-
-        return X,y
+        if target == "default":
+            X = self.X_train_default.copy()
+            y = self.y_train_default[target]
+        elif target == "is_fraud":
+            X = self.X_train_fraud.copy()
+            y = self.y_train_fraud[target]
+        return X, y
 
     #correlation
     def correlation_feature(self,X,y):
@@ -404,6 +230,21 @@ class Select_feature:
         print("======================================")
 
         X, y = self.load_target(target)
+        print("Shape:", X.shape)
+        print("Missing values:", X.isna().sum().sum())
+        print(
+            "Infinite values:",
+            np.isinf(X.select_dtypes(include=np.number)).sum().sum()
+        )
+
+        # Check for potential fraud leakage
+        if target == "is_fraud":
+            leakage_candidates = [
+                col for col in X.columns
+                if "fraud" in col.lower()
+            ]
+            print("Potential leakage columns:", leakage_candidates)
+        print("Target missing:", y.isna().sum())
         correlation = self.correlation_feature(X, y)
         mi = self.mutual_information(X, y)
         rfe = self.rfe_features(X, y)
@@ -440,6 +281,17 @@ class Select_feature:
         print("\nSET_E")
         print(set_e)
 
+        # Save selected feature lists
+        FEATURE_DIR = PROCESSED_DATA_DIR / "selected_features"
+        FEATURE_DIR.mkdir(parents=True, exist_ok=True)
+
+        with open(FEATURE_DIR / f"features_{target}_set_d.json", "w") as f:
+            json.dump(set_d, f, indent=4)
+
+        with open(FEATURE_DIR / f"features_{target}_set_e.json", "w") as f:
+            json.dump(set_e, f, indent=4)
+
+        print(f"Feature lists saved to: {FEATURE_DIR}")
 
         return rfe,rfecv,set_d,set_e
 
@@ -451,6 +303,10 @@ def main():
         "is_fraud"
     )
 
+
+
+
+
     default_rfe, default_rfecv, default_set_d, default_set_e = selector.run(
         "default"
     )
@@ -458,9 +314,3 @@ def main():
 
 if __name__=="__main__":
     main()  
-    
-
-
-
-
-
