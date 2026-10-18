@@ -5,7 +5,7 @@ from typing import Any
 class Loan(BaseModel):
     amount:int
 
-class FraudPredictionRequest(BaseModel):
+class  FraudPredictionRequest(BaseModel):
     spending_to_income:float
     txn_transaction_count:float
     txn_failed_attempts_24h_max:float
