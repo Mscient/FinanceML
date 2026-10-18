@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.preprocessing import StandardScaler
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
-
+MODELS_DIR=str(Path(__file__).resolve().parents[2] / "models")
 class Random:
 
     def __init__(self):
@@ -67,13 +67,19 @@ class Random:
     def train(self, target, model,feature_set):
         X_train, X_test, y_train, y_test = self.load_data(target,feature_set)
         self.model.fit(X_train, y_train)
+        dist1 = self.feature(X_train)
+        if target == "default":
+            scaler = StandardScaler()
+            X_train = scaler.fit_transform(X_train)
+            X_test = scaler.transform(X_test)
+            joblib.dump(scaler, Path(MODELS_DIR) / "random_forest_scaler.pkl")
+
         y_pred = self.model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred, zero_division=0)
         recall = recall_score(y_test, y_pred, zero_division=0)
         f1 = f1_score(y_test, y_pred, zero_division=0)
         confusion = confusion_matrix(y_test, y_pred)
-        dist1 = self.feature(X_train)
         return accuracy, precision, recall, f1, confusion, dist1
 
 
@@ -144,8 +150,8 @@ def main():
     MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
-    joblib.dump(model, MODELS_DIR / "random_forest_fraud.pkl")
-    joblib.dump(model, MODELS_DIR / "random_forest_default.pkl")
+    joblib.dump(model.model, MODELS_DIR / "random_forest_fraud.pkl")
+    joblib.dump(model.model, MODELS_DIR / "random_forest_default.pkl")
     
 
 if __name__ == "__main__":

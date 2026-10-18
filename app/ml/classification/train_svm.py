@@ -81,7 +81,8 @@ class SVM:
         scaler=StandardScaler()
         X_train=scaler.fit_transform(X_train)
         X_test=scaler.transform(X_test)
-        joblib.dump(scaler, MODELS_DIR / "svm_scaler.pkl")
+        # Save with target-specific name so runs don't overwrite each other
+        joblib.dump(scaler, MODELS_DIR / f"svm_{target}_scaler.pkl")
 
         self.model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
@@ -158,8 +159,8 @@ def main():
     
 
 
-    joblib.dump(model, MODELS_DIR / "svm_fraud.pkl")
-    joblib.dump(model, MODELS_DIR / "svm_default.pkl")
+    joblib.dump(model.model, MODELS_DIR / "svm_fraud.pkl")
+    joblib.dump(model.model, MODELS_DIR / "svm_default.pkl")
    
 
 
