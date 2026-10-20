@@ -1,0 +1,12 @@
+[
+    "loan_purpose_home",
+    "monthly_income",
+    "annual_income",
+    "salary_to_loan",
+    "monthly_spending",
+    "avg_transaction_amount",
+    "credit_score",
+    "debt_to_loan",
+    "txn_distance_from_usual_location_std",
+    "existing_debt"
+]

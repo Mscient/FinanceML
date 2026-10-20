@@ -62,90 +62,80 @@ class LogisticRegressionModel:
         return X_train, X_test, y_train, y_test
 
      
-    def train_(self,target,model,feature_set):
-        model = model
-        X_train, X_test, y_train, y_test = model.load_data(target,feature_set)
-
-        scaler=StandardScaler()
-        joblib.dump(scaler, MODELS_DIR / "logistic_regression_scaler.pkl")
-        scaler.fit(X_train)
-        X_train = scaler.transform(X_train)
-        X_test = scaler.transform(X_test)
+    # ------------------------------------------------------------------
+    # Interface used by feature_set_validation (pre-split arrays/frames)
+    # ------------------------------------------------------------------
+    def train(self, target, model, X_train, y_train):
+        """Fit on pre-split, already-scaled training data passed in by the caller."""
         self.model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
+
+    # ------------------------------------------------------------------
+    # Standalone training (reads CSVs, scales, saves model to disk)
+    # ------------------------------------------------------------------
+    def train_and_save(self, target, feature_set):
+        """Full standalone training from processed CSVs."""
+        X_train, X_test, y_train, y_test = self.load_data(target, feature_set)
+
+        scaler = StandardScaler()
+        scaler.fit(X_train)
+        X_train_s = scaler.transform(X_train)
+        X_test_s  = scaler.transform(X_test)
+
+        self.model.fit(X_train_s, y_train)
+        y_pred = self.model.predict(X_test_s)
+
+        accuracy  = accuracy_score(y_test, y_pred)
         precision = precision_score(y_test, y_pred, zero_division=0)
-        recall=recall_score(y_test, y_pred, zero_division=0)
-        f1=f1_score(y_test, y_pred, zero_division=0)
-        confusion=confusion_matrix(y_test, y_pred)
-        return accuracy, precision ,recall,f1,confusion
+        recall    = recall_score(y_test, y_pred, zero_division=0)
+        f1        = f1_score(y_test, y_pred, zero_division=0)
+        confusion = confusion_matrix(y_test, y_pred)
+
+        joblib.dump(scaler, MODELS_DIR / "logistic_regression_scaler.pkl")
+        joblib.dump(self.model, MODELS_DIR / f"logistic_{target}.pkl")
+
+        return accuracy, precision, recall, f1, confusion
+
 
 def main():
-    model=LogisticRegressionModel()
+    model = LogisticRegressionModel()
 
-    #loading feature sets
-    set_e_fraud = model.feature_dir / "features_is_fraud_set_e.json"
+    # loading feature sets
+    set_e_fraud   = model.feature_dir / "features_is_fraud_set_e.json"
     set_e_default = model.feature_dir / "features_default_set_e.json"
 
     with open(set_e_fraud) as f:
         fraud_features = json.load(f)
-
     with open(set_e_default) as f:
         default_features = json.load(f)
 
-    #set_e
-    print("SET_E")
-    print("FRAUD")
-    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion= model.train_('is_fraud',model,fraud_features)
-    print("is_fraud_accuracy:", is_fraud_accuracy)
-    print("is_fraud_precision:", is_fraud_precision)
-    print("is_Recall:",is_fraud_recall)
-    print("is_f1:",is_fraud_f1)
-    print("is_confusion:",is_fraud_confusion)
-     
-    default_accuracy, default_precision,default_recall,default_f1,default_confusion= model.train_('default',model,default_features)
-    print("default_accuracy:", default_accuracy)
-    print("default_precision:", default_precision)
-    print("default_recall:",default_recall)
-    print("default_f1:",default_f1)
-    print("default_confusion:",default_confusion)
+    print("SET_E  |  FRAUD")
+    acc, prec, rec, f1, conf = model.train_and_save("is_fraud", fraud_features)
+    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
+    print(f"confusion:\n{conf}")
 
-    #set_D
-    print("SET_D")
+    print("\nSET_E  |  DEFAULT")
+    acc, prec, rec, f1, conf = model.train_and_save("default", default_features)
+    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
+    print(f"confusion:\n{conf}")
 
-    set_d_fraud = model.feature_dir / "features_is_fraud_set_d.json"
+    set_d_fraud   = model.feature_dir / "features_is_fraud_set_d.json"
     set_d_default = model.feature_dir / "features_default_set_d.json"
 
     with open(set_d_fraud) as f:
         fraud_features = json.load(f)
-
     with open(set_d_default) as f:
         default_features = json.load(f)
-    print("SET_D")
-    print("DEFAULT")
-    default_accuracy, default_precision,default_recall,default_f1,default_confusion= model.train_("default",model,default_features)
-    print("default_accuracy:", default_accuracy)
-    print("default_precision:", default_precision)
-    print("default_recall:",default_recall)
-    print("default_f1:",default_f1)
-    print("default_confusion:",default_confusion)
 
-    print("fraud")
-    is_fraud_accuracy, is_fraud_precision,is_fraud_recall,is_fraud_f1,is_fraud_confusion= model.train_("is_fraud",model,fraud_features)
-    print("is_fraud_accuracy:", is_fraud_accuracy)
-    print("is_fraud_precision:", is_fraud_precision)
-    print("is_Recall:",is_fraud_recall)
-    print("is_f1:",is_fraud_f1)
-    print("is_confusion:",is_fraud_confusion)
+    print("\nSET_D  |  FRAUD")
+    acc, prec, rec, f1, conf = model.train_and_save("is_fraud", fraud_features)
+    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
+    print(f"confusion:\n{conf}")
 
-    
+    print("\nSET_D  |  DEFAULT")
+    acc, prec, rec, f1, conf = model.train_and_save("default", default_features)
+    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
+    print(f"confusion:\n{conf}")
 
-    MODELS_DIR = Path(__file__).resolve().parents[2] / "models"
-    MODELS_DIR.mkdir(parents=True, exist_ok=True)
-
-    joblib.dump(model, MODELS_DIR / "logistic_fraud.pkl")
-    joblib.dump(model, MODELS_DIR / "logistic_default.pkl")
-    
 
 if __name__ == "__main__":
     main()

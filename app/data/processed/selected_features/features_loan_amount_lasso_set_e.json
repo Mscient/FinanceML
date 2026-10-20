@@ -1,0 +1,14 @@
+[
+    "monthly_income",
+    "annual_income",
+    "monthly_spending",
+    "salary_to_loan",
+    "debt_to_loan",
+    "avg_transaction_amount",
+    "credit_score",
+    "existing_debt",
+    "loan_purpose_education",
+    "loan_purpose_auto",
+    "loan_purpose_home",
+    "loan_purpose_personal"
+]
