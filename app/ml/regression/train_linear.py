@@ -34,11 +34,9 @@ class LinearRegressionModel:
         #feautre_set
         self.feature_dir = PROCESSED_DATA_DIR/"selected_features"
 
-     
 
     def predict(self, x_test):
         return self.model.predict(x_test)
-
 
     def predict_proba(self, x_test):
         return self.model.predict_proba(x_test)
@@ -60,7 +58,6 @@ class LinearRegressionModel:
         
         return X_train, X_test, y_train, y_test
 
-     
   
     def train(self, target, model, X_train, y_train):
         """Fit on pre-split, already-scaled training data passed in by the caller."""
@@ -91,9 +88,9 @@ class LinearRegressionModel:
         return accuracy, precision, recall, f1, confusion
 
 
+
 def main():
     model = LinearRegressionModel()
-
     # loading feature sets
     set_e_fraud   = model.feature_dir / "features_is_fraud_set_e.json"
     set_e_default = model.feature_dir / "features_default_set_e.json"

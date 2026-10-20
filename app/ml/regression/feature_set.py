@@ -13,11 +13,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold
 
 
-# ---------------------------------------------------------------------------
-# Helper: scale y so that penalty-based models (Lasso, ElasticNet) converge.
-# loan_amount is in the hundreds-of-thousands range; without scaling the
-# alpha penalty is negligible and coordinate descent never converges.
-# ---------------------------------------------------------------------------
+
 def _scale_y(y):
     """Return (y_scaled, y_std) so that y_scaled = y / y_std."""
     std = y.std()
@@ -33,7 +29,7 @@ class Select_feature:
         self.y_test  = pd.read_csv(PROCESSED_DATA_DIR / "y_test_loan_amount.csv").squeeze()
 
     def load_target(self, target):
-        """Return (X_train, y_train) for the given target name."""
+       
         if target == "loan_amount":
             return self.X_train.copy(), self.y_train.copy()
         elif target == "default":
@@ -47,10 +43,7 @@ class Select_feature:
         else:
             raise ValueError(f"Unknown target: {target}")
 
-    # ------------------------------------------------------------------ #
-    # Feature scoring methods                                              #
-    # ------------------------------------------------------------------ #
-
+   
     def correlation_feature(self, X, y):
         return X.corrwith(y).abs().sort_values(ascending=False)
 
@@ -101,7 +94,6 @@ class Select_feature:
         return pd.Series(model.feature_importances_, index=X.columns).sort_values(ascending=False)
 
     # ---- Lasso -------------------------------------------------------- #
-
     def lasso(self, X, y):
         """
         Lasso-based feature selection.
@@ -110,18 +102,14 @@ class Select_feature:
         """
         scaler_x = StandardScaler()
         X_scaled = scaler_x.fit_transform(X)
-
         # Scale y — critical for coordinate-descent models with large targets
         y_scaled, _ = _scale_y(y)
-
         model = Lasso(alpha=1.0, max_iter=10000)
         model.fit(X_scaled, y_scaled)
-
         # RFE
         rfe_sel = RFE(estimator=Lasso(alpha=1.0, max_iter=10000), n_features_to_select=5)
         rfe_sel.fit(X_scaled, y_scaled)
         rfe = X.columns[rfe_sel.support_].tolist()
-
         # RFECV
         cv = KFold(n_splits=5, shuffle=True, random_state=42)
         rfecv_sel = RFECV(
@@ -134,16 +122,12 @@ class Select_feature:
         # Coefficient-based importance (from the already-fitted model)
         coef = pd.Series(np.abs(model.coef_), index=X.columns).sort_values(ascending=False)
         selected = coef[coef > 0].index.tolist()
-
         return rfe, rfecv, coef, selected
 
     # ---- ElasticNet --------------------------------------------------- #
 
     def elastic(self, X, y):
-        """
-        ElasticNet-based feature selection.
-        Same y-scaling trick as lasso().
-        """
+        
         scaler_x = StandardScaler()
         X_scaled = scaler_x.fit_transform(X)
 
@@ -172,11 +156,11 @@ class Select_feature:
         coef = pd.Series(np.abs(model.coef_), index=X.columns).sort_values(ascending=False)
         selected = coef[coef > 0].index.tolist()
 
-        return rfe, rfecv, coef, selected   # <-- was missing; caused NoneType unpack crash
+        return rfe, rfecv, coef, selected    
 
-    # ------------------------------------------------------------------ #
-    # Evidence table & feature set construction                           #
-    # ------------------------------------------------------------------ #
+   
+    # Evidence table & feature set construction                           
+     
 
     def evidence_table(self, correlation, mi, rfe, rfecv, l1_coef, rf):
         table = pd.DataFrame(index=correlation.index)
@@ -207,11 +191,9 @@ class Select_feature:
         set_d = ev_table.index[core_mask].tolist()
         set_e = ev_table.index[strong_mask].tolist() + set_d
         return set_d, set_e
-
-    # ------------------------------------------------------------------ #
+ 
     # Main pipeline                                                        #
-    # ------------------------------------------------------------------ #
-
+    
     def run(self, target):
         print("\n======================================")
         print(f"TARGET: {target}")
@@ -241,9 +223,11 @@ class Select_feature:
 
         # Lasso
         print("\n--- Lasso ---")
+
         rfe_l, rfecv_l, coef_l, sel_l = self.lasso(X, y)
         ev_lasso = self.evidence_table(correlation, mi, rfe_l, rfecv_l, coef_l, rf)
         set_lasso_d, set_lasso_e = self.create_set(ev_lasso)
+
         print("RFE:", rfe_l)
         print("RFECV:", rfecv_l)
         print("SET D:", set_lasso_d)
@@ -251,9 +235,11 @@ class Select_feature:
 
         # ElasticNet
         print("\n--- ElasticNet ---")
+
         rfe_e, rfecv_e, coef_e, sel_e = self.elastic(X, y)
         ev_elastic = self.evidence_table(correlation, mi, rfe_e, rfecv_e, coef_e, rf)
         set_elastic_d, set_elastic_e = self.create_set(ev_elastic)
+
         print("RFE:", rfe_e)
         print("RFECV:", rfecv_e)
         print("SET D:", set_elastic_d)
