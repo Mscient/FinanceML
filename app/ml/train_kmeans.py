@@ -40,10 +40,10 @@ class Km:
 
     def train_and_save(self):
 
-        # 1. Load dataset
+        
         df = self.load_dataset(self.path)
 
-        # 2. Validate required columns
+         
         missing_columns = [
             col for col in FEATURES if col not in df.columns
         ]
@@ -53,7 +53,7 @@ class Km:
                 f"Missing required columns: {missing_columns}"
             )
 
-        # 3. Select features and clean invalid values
+       
         X = df[FEATURES].copy()
 
         X = X.replace([np.inf, -np.inf], np.nan)
@@ -66,11 +66,11 @@ class Km:
 
         print(f"Dataset shape for clustering: {X.shape}")
 
-        # 4. Scale features
+    
         scaler = StandardScaler()
         X_scaled = scaler.fit_transform(X)
 
-        # 5. Elbow method
+        
         inertias = []
         k_values = range(2, 11)
 
@@ -105,8 +105,7 @@ class Km:
         plt.show()
         plt.close()
 
-        # 6. Train final K-Means model
-        # Current choice: K = 3
+         
         optimal_k = 3
 
         final_model = KMeans(
@@ -118,7 +117,7 @@ class Km:
 
         labels = final_model.fit_predict(X_scaled)
 
-        # 7. Evaluate clustering
+
         score = silhouette_score(
             X_scaled,
             labels,
@@ -140,7 +139,7 @@ class Km:
 
         print(f"Cluster sizes: {cluster_sizes}")
 
-        # 8. PCA visualization
+     
         pca = PCA(n_components=2)
         X_pca = pca.fit_transform(X_scaled)
 
@@ -192,8 +191,7 @@ class Km:
             "Variance explained by 2 PCA components: "
             f"{explained_variance:.2f}%"
         )
-
-        # 9. Save model and scaler
+ 
         joblib.dump(
             final_model,
             MODELS_DIR / "kmeans.pkl"
@@ -206,18 +204,17 @@ class Km:
 
         print("K-Means model saved.")
         print("Scaler saved.")
-
-                # Use the same rows that were used to train K-Means
+   
         cluster_data = X.copy()
         cluster_data["cluster"] = labels
 
-        # Compare original financial feature averages
+       
         profile = cluster_data.groupby("cluster")[FEATURES].mean().round(2)
 
         print("\nCluster Profiles:")
         print(profile.to_string())
 
-        # Save results for further analysis
+      
         profile.to_csv(MODELS_DIR / "kmeans_cluster_profiles.csv")
         cluster_data.to_csv(
             MODELS_DIR / "kmeans_cluster_assignments.csv",

@@ -78,6 +78,16 @@ class Loan_amount(BaseModel):
     loan_purpose_personal: float = 0.0
     loan_purpose_home: float = 0.0
 
+class Cluster(BaseModel):
+    monthly_income:float
+    monthly_spending:float
+    savings_balance:float
+    existing_debt:float
+    credit_util:float
+    debt_to_income:float
+    savings_to_income:float
+
+#RESPONSE
 
 class LoanResponse(BaseModel):
     amount:int
@@ -96,4 +106,15 @@ class LoanApplication(BaseModel):
     loan:Loan
     fraud:FraudPredictionRequest
     default:DefaultPredictionRequest
-    
+
+class ClusterProfileResult(BaseModel):
+    cluster_id: int
+    segment: str
+    description: str
+    financial_summary: dict[str, float]
+    recommendations: list[str]
+    disclaimer: str
+
+class ClusterResponse(BaseModel):
+    results: list[ClusterProfileResult]
+
