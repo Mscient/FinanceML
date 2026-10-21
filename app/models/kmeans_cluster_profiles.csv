@@ -1,0 +1,4 @@
+cluster,monthly_income,monthly_spending,savings_balance,existing_debt,credit_util,debt_to_income,savings_to_income
+0,42104.78,23595.94,179720.46,32844.58,0.27,0.07,0.38
+1,109077.11,57360.97,980078.71,160568.39,0.34,0.12,0.95
+2,45935.4,25561.64,190958.06,203205.19,0.62,0.38,0.37

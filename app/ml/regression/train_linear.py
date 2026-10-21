@@ -19,17 +19,6 @@ class LinearRegressionModel:
     def __init__(self):
         self.model = LinearRegression()
 
-         # default
-        self.X_train_default = pd.read_csv(PROCESSED_DATA_DIR / "X_train_default.csv")
-        self.X_test_default  = pd.read_csv(PROCESSED_DATA_DIR / "X_test_default.csv")
-        self.y_train_default = pd.read_csv(PROCESSED_DATA_DIR / "y_train_default.csv")
-        self.y_test_default  = pd.read_csv(PROCESSED_DATA_DIR / "y_test_default.csv")
-
-        # is_fraud
-        self.X_train_fraud = pd.read_csv(PROCESSED_DATA_DIR / "X_train_is_fraud.csv")
-        self.X_test_fraud  = pd.read_csv(PROCESSED_DATA_DIR / "X_test_is_fraud.csv")
-        self.y_train_fraud = pd.read_csv(PROCESSED_DATA_DIR / "y_train_is_fraud.csv")
-        self.y_test_fraud  = pd.read_csv(PROCESSED_DATA_DIR / "y_test_is_fraud.csv")
 
         #feautre_set
         self.feature_dir = PROCESSED_DATA_DIR/"selected_features"
@@ -92,39 +81,24 @@ class LinearRegressionModel:
 def main():
     model = LinearRegressionModel()
     # loading feature sets
-    set_e_fraud   = model.feature_dir / "features_is_fraud_set_e.json"
-    set_e_default = model.feature_dir / "features_default_set_e.json"
+    set_e   = model.feature_dir / "features_loan_amount_set_e.json"
+    
+    with open(set_e) as f:
+        loan_features = json.load(f)
 
-    with open(set_e_fraud) as f:
-        fraud_features = json.load(f)
-    with open(set_e_default) as f:
-        default_features = json.load(f)
-
-    print("SET_E  |  FRAUD")
-    acc, prec, rec, f1, conf = model.train_and_save("is_fraud", fraud_features)
+    print("SET_E  |  LOAN AMOUNT")
+    acc, prec, rec, f1, conf = model.train_and_save("loan_amount", fraud_features)
     print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
     print(f"confusion:\n{conf}")
 
-    print("\nSET_E  |  DEFAULT")
-    acc, prec, rec, f1, conf = model.train_and_save("default", default_features)
-    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
-    print(f"confusion:\n{conf}")
-
-    set_d_fraud   = model.feature_dir / "features_is_fraud_set_d.json"
-    set_d_default = model.feature_dir / "features_default_set_d.json"
-
+     
+    set_d_fraud   = model.feature_dir / "features_loan_amount_set_d.json"
+    
     with open(set_d_fraud) as f:
         fraud_features = json.load(f)
-    with open(set_d_default) as f:
-        default_features = json.load(f)
-
+   
     print("\nSET_D  |  FRAUD")
-    acc, prec, rec, f1, conf = model.train_and_save("is_fraud", fraud_features)
-    print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
-    print(f"confusion:\n{conf}")
-
-    print("\nSET_D  |  DEFAULT")
-    acc, prec, rec, f1, conf = model.train_and_save("default", default_features)
+    acc, prec, rec, f1, conf = model.train_and_save("loan_amount", fraud_features)
     print(f"accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}")
     print(f"confusion:\n{conf}")
 

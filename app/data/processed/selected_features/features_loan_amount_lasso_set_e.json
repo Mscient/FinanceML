@@ -2,13 +2,14 @@
     "monthly_income",
     "annual_income",
     "monthly_spending",
-    "salary_to_loan",
-    "debt_to_loan",
+    "num_transactions_per_month",
     "avg_transaction_amount",
     "credit_score",
+    "savings_balance",
     "existing_debt",
-    "loan_purpose_education",
     "loan_purpose_auto",
-    "loan_purpose_home",
-    "loan_purpose_personal"
+    "spending_to_income",
+    "loan_purpose_education",
+    "loan_purpose_personal",
+    "loan_purpose_home"
 ]

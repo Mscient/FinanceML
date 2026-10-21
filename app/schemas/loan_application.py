@@ -63,6 +63,26 @@ class DefaultPredictionRequest(BaseModel):
     debt_to_saving_ratio: float
     monthly_emi: float
 
+class Loan_amount(BaseModel):
+    monthly_income: float
+    annual_income: float
+    monthly_spending: float
+    num_transactions_per_month: float = 20.0
+    avg_transaction_amount: float
+    credit_score: float
+    savings_balance: float = 0.0
+    existing_debt: float = 0.0
+    spending_to_income: float | None = None
+    loan_purpose_auto: float = 0.0
+    loan_purpose_education: float = 0.0
+    loan_purpose_personal: float = 0.0
+    loan_purpose_home: float = 0.0
+
+
+class LoanResponse(BaseModel):
+    amount:int
+
+
 class FraudResponse(BaseModel):
     is_fraud:bool
     prediction:int

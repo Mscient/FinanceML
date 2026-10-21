@@ -13,7 +13,6 @@
     "avg_transaction_amount": 1168.0,
     "num_transactions_per_month": 21.0,
     "online_transactions_ratio": 0.64,
-    "salary_to_loan": 1.1197,
     "debt_to_income": 0.103,
     "spending_to_income": 0.5799,
     "savings_to_income": 0.28335,
@@ -58,9 +57,7 @@
     "txn_merchant_risk_score_min": 0.102,
     "txn_merchant_risk_score_max": 0.171,
     "txn_merchant_risk_score_sum": 0.206,
-    "debt_to_loan": 0.07980456026058631,
-    "salary_to_savings": 3.529188594392881,
-    "debt_to_saving_ratio": 4.302748801713404
+    "salary_to_savings": 3.529188594392881
   },
   "categorical_modes": {
     "employment_type": "salaried",
@@ -81,7 +78,6 @@
     "avg_transaction_amount",
     "num_transactions_per_month",
     "online_transactions_ratio",
-    "salary_to_loan",
     "debt_to_income",
     "spending_to_income",
     "savings_to_income",
@@ -126,9 +122,7 @@
     "txn_merchant_risk_score_min",
     "txn_merchant_risk_score_max",
     "txn_merchant_risk_score_sum",
-    "debt_to_loan",
     "salary_to_savings",
-    "debt_to_saving_ratio",
     "employment_type_contract",
     "employment_type_salaried",
     "employment_type_self_employed",

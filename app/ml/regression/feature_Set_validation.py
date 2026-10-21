@@ -70,7 +70,10 @@ class feature_validation:
 
         return regression_metrics(y_val.values, y_pred)
 
- 
+
+# ---------------------------------------------------------------------------
+# Validate multiple feature sets for a single model class
+# ---------------------------------------------------------------------------
 def validate_feature_sets(fv, model_name, model_factory, feature_sets):
     print(f"\n{'-'*55}")
     print(f"  {model_name}")
@@ -85,7 +88,9 @@ def validate_feature_sets(fv, model_name, model_factory, feature_sets):
         print(f"  set_{name:<5}  {mae:>14,.0f}  {rmse:>14,.0f}  {r2:>7.4f}  {mape:>7.2f}%")
 
 
- 
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
 def main():
     fv = feature_validation()
 

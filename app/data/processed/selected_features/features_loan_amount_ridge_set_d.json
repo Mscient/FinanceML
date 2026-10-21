@@ -2,11 +2,12 @@
     "loan_purpose_home",
     "monthly_income",
     "annual_income",
-    "salary_to_loan",
+    "loan_purpose_personal",
     "monthly_spending",
+    "num_transactions_per_month",
     "avg_transaction_amount",
     "credit_score",
-    "debt_to_loan",
-    "txn_distance_from_usual_location_std",
-    "existing_debt"
+    "savings_balance",
+    "existing_debt",
+    "spending_to_income"
 ]

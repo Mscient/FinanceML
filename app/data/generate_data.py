@@ -195,7 +195,7 @@ def prepare_target(df, target):
     data = df.loc[df[target_column].notna()].copy()
     y = pd.to_numeric(data[target_column], errors="raise").astype(int)
 
-    # IDs, targets, and direct fraud-label aggregates are not model inputs.
+     
     excluded = {
         "customer_id",
         "transaction_id",
@@ -205,10 +205,16 @@ def prepare_target(df, target):
         "txn_fraud_transaction_count",
         "txn_fraud_transaction_rate",
     }
-    # For loan_amount regression, also exclude the target itself and columns
-    # that are derived from it (monthly_emi, loan_term_months) to prevent leakage.
+    
     if target == "loan_amount":
-        excluded.update({"loan_amount", "monthly_emi", "loan_term_months"})
+        excluded.update({
+            "loan_amount",
+            "monthly_emi",
+            "loan_term_months",
+            "salary_to_loan",
+            "debt_to_loan",
+            "debt_to_saving_ratio",
+        })
     X = data.drop(columns=[c for c in excluded if c in data.columns])
 
     return X, y
@@ -338,11 +344,11 @@ def main():
     df = clean_data(df)
     df = validate_data(df)
     df = engineer_features(df)
-
-    # Separate modeling tables are created from the same merged source.
     run_target_pipeline(df, "default")
     run_target_pipeline(df, "is_fraud")
     run_target_pipeline(df,"loan_amount")
+
+    
 
 
 if __name__ == "__main__":
