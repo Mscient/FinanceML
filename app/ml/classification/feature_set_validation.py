@@ -3,8 +3,8 @@ import numpy as np
 import json
 from pathlib import Path
 from feature_selection import Select_feature
-from train_random import Random
 from train_logistic import LogisticRegressionModel
+from train_random import Random
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -15,6 +15,7 @@ class feature_validation:
     def __init__(self):
         DATA_DIR = Path(__file__).resolve().parents[2] / "data"
         PROCESSED_DATA_DIR = DATA_DIR / "processed"
+
 
         #default
         self.X_train_default = pd.read_csv(PROCESSED_DATA_DIR / "X_train_default.csv")
@@ -31,6 +32,7 @@ class feature_validation:
 
         self.set_a=self.X_train_fraud.columns.tolist()
         self.set_b=self.X_train_default.columns.tolist()
+
 
     
     def validation(self, feature_set, target):
@@ -80,13 +82,14 @@ class feature_validation:
         return threshold
     
     def train_model(self, model, train_x, train_y, test_x, test_y,target):
+        model=model
         from train_logistic import LogisticRegressionModel as LR
 
         if isinstance(model, LR):
             scaler = StandardScaler()
             train_x = scaler.fit_transform(train_x.values if hasattr(train_x, 'values') else train_x)
             test_x  = scaler.transform(test_x.values if hasattr(test_x, 'values') else test_x)
-        model.train(train_x, train_y)
+        model.train(target,model,train_x,train_y)
         pred      = model.predict(test_x)
         accuracy  = accuracy_score(test_y, pred)
         precision = precision_score(test_y, pred, zero_division=0)

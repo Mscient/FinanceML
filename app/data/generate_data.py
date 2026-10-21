@@ -10,7 +10,7 @@ OUTPUT_DIR = BASE_DIR / "processed"
 
 
 def generate_data():
-    """Load the consolidated mock dataset."""
+    
     return load_data(DATA_PATH)
 
 
@@ -183,6 +183,7 @@ def prepare_target(df, target):
         "default": "default",
         "is_fraud": "txn_is_fraud",
         "txn_is_fraud": "txn_is_fraud",
+        "loan_amount":"loan_amount",
     }
     if target not in target_map:
         raise ValueError("target must be 'default' or 'is_fraud'.")
@@ -194,7 +195,7 @@ def prepare_target(df, target):
     data = df.loc[df[target_column].notna()].copy()
     y = pd.to_numeric(data[target_column], errors="raise").astype(int)
 
-    # IDs, targets, and direct fraud-label aggregates are not model inputs.
+     
     excluded = {
         "customer_id",
         "transaction_id",
@@ -204,6 +205,16 @@ def prepare_target(df, target):
         "txn_fraud_transaction_count",
         "txn_fraud_transaction_rate",
     }
+    
+    if target == "loan_amount":
+        excluded.update({
+            "loan_amount",
+            "monthly_emi",
+            "loan_term_months",
+            "salary_to_loan",
+            "debt_to_loan",
+            "debt_to_saving_ratio",
+        })
     X = data.drop(columns=[c for c in excluded if c in data.columns])
 
     return X, y
@@ -252,8 +263,10 @@ def preprocess_split(X_train, X_test):
         X_train[col] = X_train[col].astype("string").fillna("unknown")
         X_test[col] = X_test[col].astype("string").fillna("unknown")
         modes = X_train[col].mode(dropna=True)
+
         mode = str(modes.iloc[0]) if not modes.empty else "unknown"
         categorical_modes[col] = mode
+
         X_train[col] = X_train[col].replace("<NA>", mode)
         X_test[col] = X_test[col].replace("<NA>", mode)
 
@@ -274,19 +287,18 @@ def preprocess_split(X_train, X_test):
     return X_train, X_test, metadata
 
 
-def split_data(X, y):
-    """Stratified split preserves class proportions."""
+def split_data(X, y, is_regression=False):
+    """Split data; stratified for classification, plain random for regression."""
     return train_test_split(
         X, y,
         test_size=0.2,
         random_state=42,
-        stratify=y,
+        stratify=None if is_regression else y,
     )
 
 
 def save_processed_data(X_train, X_test, y_train, y_test, target, metadata):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
     X_train.to_csv(OUTPUT_DIR / f"X_train_{target}.csv", index=False)
     X_test.to_csv(OUTPUT_DIR / f"X_test_{target}.csv", index=False)
     y_train.to_frame(name=target).to_csv(
@@ -295,7 +307,6 @@ def save_processed_data(X_train, X_test, y_train, y_test, target, metadata):
     y_test.to_frame(name=target).to_csv(
         OUTPUT_DIR / f"y_test_{target}.csv", index=False
     )
-
     with open(OUTPUT_DIR / f"preprocessing_{target}.json", "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
 
@@ -304,13 +315,16 @@ def run_target_pipeline(df, target):
     print(f"\n{'=' * 18} TARGET: {target} {'=' * 18}")
     X, y = prepare_target(df, target)
 
+    # Treat loan_amount (and any future continuous target) as regression
+    is_regression = target == "loan_amount"
+
     print("Raw feature matrix:", X.shape)
     print("Target distribution:")
     print(y.value_counts().sort_index())
     print("Target prevalence:")
     print(y.value_counts(normalize=True).sort_index())
 
-    X_train, X_test, y_train, y_test = split_data(X, y)
+    X_train, X_test, y_train, y_test = split_data(X, y, is_regression=is_regression)
     X_train, X_test, metadata = preprocess_split(X_train, X_test)
 
     save_processed_data(
@@ -330,10 +344,11 @@ def main():
     df = clean_data(df)
     df = validate_data(df)
     df = engineer_features(df)
-
-    # Separate modeling tables are created from the same merged source.
     run_target_pipeline(df, "default")
     run_target_pipeline(df, "is_fraud")
+    run_target_pipeline(df,"loan_amount")
+
+    
 
 
 if __name__ == "__main__":

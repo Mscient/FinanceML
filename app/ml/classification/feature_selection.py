@@ -303,10 +303,6 @@ def main():
         "is_fraud"
     )
 
-
-
-
-
     default_rfe, default_rfecv, default_set_d, default_set_e = selector.run(
         "default"
     )

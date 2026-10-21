@@ -1,0 +1,13 @@
+[
+    "num_transactions_per_month",
+    "monthly_spending",
+    "avg_transaction_amount",
+    "savings_balance",
+    "existing_debt",
+    "spending_to_income",
+    "loan_purpose_home",
+    "monthly_income",
+    "annual_income",
+    "loan_purpose_personal",
+    "credit_score"
+]
