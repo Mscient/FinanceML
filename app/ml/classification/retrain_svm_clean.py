@@ -16,6 +16,9 @@ MODELS_DIR    = Path(__file__).resolve().parents[2] / "models"
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+from sklearn.pipeline import Pipeline
+
+
 def train_svc(target: str, feature_set: list, pkl_name: str, scaler_name: str):
     if target == "is_fraud":
         X_train = pd.read_csv(PROCESSED_DIR / "X_train_is_fraud.csv")[feature_set]
@@ -28,15 +31,14 @@ def train_svc(target: str, feature_set: list, pkl_name: str, scaler_name: str):
         y_train = pd.read_csv(PROCESSED_DIR / "y_train_default.csv")["default"]
         y_test  = pd.read_csv(PROCESSED_DIR / "y_test_default.csv")["default"]
 
-    scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
-    X_test_s  = scaler.transform(X_test)
+    pipeline = Pipeline([
+        ("scaler", StandardScaler()),
+        ("svm", SVC(kernel="linear", C=1.0, class_weight="balanced",
+                    probability=True, random_state=42))
+    ])
+    pipeline.fit(X_train, y_train)
 
-    model = SVC(kernel="linear", C=1.0, class_weight="balanced",
-                probability=True, random_state=42)
-    model.fit(X_train_s, y_train)
-
-    y_pred = model.predict(X_test_s)
+    y_pred = pipeline.predict(X_test)
     print(f"\n[{target}] ({pkl_name})")
     print(f"  accuracy : {accuracy_score(y_test, y_pred):.4f}")
     print(f"  precision: {precision_score(y_test, y_pred, zero_division=0):.4f}")
@@ -44,8 +46,8 @@ def train_svc(target: str, feature_set: list, pkl_name: str, scaler_name: str):
     print(f"  f1       : {f1_score(y_test, y_pred, zero_division=0):.4f}")
     print(f"  confusion:\n{confusion_matrix(y_test, y_pred)}")
 
-    joblib.dump(model,  MODELS_DIR / pkl_name)
-    joblib.dump(scaler, MODELS_DIR / scaler_name)
+    joblib.dump(pipeline, MODELS_DIR / pkl_name)
+    joblib.dump(pipeline.named_steps["scaler"], MODELS_DIR / scaler_name)
     print(f"  Saved: {pkl_name}, {scaler_name}")
 
 

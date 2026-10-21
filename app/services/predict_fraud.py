@@ -23,7 +23,11 @@ class Predict:
         x_test = input_df[self.features]
         return self.model.predict_proba(x_test)
 
-def main(input_df:pd.DataFrame):
+def main(input_df: pd.DataFrame = None):
+    if input_df is None:
+        test_path = Path(__file__).resolve().parents[1] / "data" / "processed" / "X_test_is_fraud.csv"
+        input_df = pd.read_csv(test_path).head(1)
+
     predict = Predict()
     predictions = predict.predict(input_df)
     return {
@@ -32,4 +36,6 @@ def main(input_df:pd.DataFrame):
 
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    print("Fraud prediction:", result)
+
