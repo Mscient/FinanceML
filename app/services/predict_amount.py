@@ -34,6 +34,7 @@ class Predict:
         return self.model.predict_proba(x_test)
 
 def main(input_df: pd.DataFrame = None):
+    
     if input_df is None:
         sample = {
             "monthly_income": 85000.0,

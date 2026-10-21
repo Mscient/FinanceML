@@ -1,6 +1,7 @@
 from fastapi import FastAPI,APIRouter
 from app.routers.classificatiom import router as classification_router
 from app.routers.regression import router as regression_router
+from app.routers.k_means import router as cluster_router
 
 
 
@@ -23,6 +24,13 @@ app.include_router(
     regression_router,
     prefix="/api",
     tags=["Regression"]
+)
+
+
+app.include_router(
+    cluster_router,
+    prefix="/api",
+    tags=["clustering"]
 )
 
 
