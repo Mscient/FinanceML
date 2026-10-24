@@ -21,6 +21,7 @@ FEATURES = [
     "savings_to_income",
 ]
 
+
 CLUSTER_PROFILES = {
     0: {
         "segment": "Stable, lower-debt",
