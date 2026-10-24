@@ -11,3 +11,6 @@ router = APIRouter()
 def predict_loan_amount(loan_application: Loan_amount):
     df = pd.DataFrame([loan_application.model_dump()])
     return predict_amount_service(df)
+
+
+

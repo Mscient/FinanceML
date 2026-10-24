@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel
 from typing import Any
 
@@ -107,14 +106,5 @@ class LoanApplication(BaseModel):
     fraud:FraudPredictionRequest
     default:DefaultPredictionRequest
 
-class ClusterProfileResult(BaseModel):
-    cluster_id: int
-    segment: str
-    description: str
-    financial_summary: dict[str, float]
-    recommendations: list[str]
-    disclaimer: str
-
 class ClusterResponse(BaseModel):
-    results: list[ClusterProfileResult]
-
+    pass
